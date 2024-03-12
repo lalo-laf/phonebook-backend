@@ -8,6 +8,10 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
 
+const generateId = () => {
+  return Math.floor(Math.random() * 100000)
+}
+
 let persons = [
   { 
     "id": 1,
@@ -53,4 +57,21 @@ app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
   persons = persons.filter(p => p.id !== id)
   response.status(204).end()
+})
+
+app.post('/api/persons', (request, response) => {
+  const body = request.body
+  
+  if (!body.name || !body.number) {
+    return response.status(400).json({ error: 'name or number missing' })
+  }
+
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: generateId()
+  }
+
+  persons = persons.concat(person)
+  response.json(person)
 })
